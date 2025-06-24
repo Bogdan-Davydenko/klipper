@@ -12,6 +12,7 @@
 #include "command.h" // DECL_CONSTANT_STR
 #include "internal.h" // enable_pclock
 #include "sched.h" // sched_main
+#include "encoder.h"
 
 
 /****************************************************************
@@ -249,6 +250,7 @@ armcm_main(void)
     RCC->APB2ENR = 0;
 
     clock_setup();
+    encoder_create(GPIO('A', 0), GPIO('A', 1));
 
     sched_main();
 }
