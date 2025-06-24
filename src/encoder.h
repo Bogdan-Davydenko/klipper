@@ -1,7 +1,7 @@
 #ifndef __ENCODER_H
 #define __ENCODER_H
 
-#include "gpio.h"
+#include "board/gpio.h"
 #include <stdint.h>
 
 // Структура энкодера (если понадобится доступ из других файлов)

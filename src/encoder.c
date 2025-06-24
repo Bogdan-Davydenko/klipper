@@ -1,6 +1,6 @@
 #include "encoder.h"
 #include "command.h"
-#include "gpio.h"
+#include "board/gpio.h"
 #include "alloc.h"
 
 // Максимум 4 энкодера
