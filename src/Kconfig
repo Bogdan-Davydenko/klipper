@@ -328,3 +328,9 @@ config HAVE_LIMITED_CODE_SIZE
     bool
 config HAVE_SOFTWARE_DIVIDE_REQUIRED
     bool
+
+config HAVE_IRONBIO
+    bool "Enable IronBio features"
+    default n
+    help
+        Enable experimental IronBio modules for Klipper.

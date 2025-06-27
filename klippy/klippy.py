@@ -96,11 +96,20 @@ class Printer:
                                'extras', module_name + '.py')
         py_dirname = os.path.join(os.path.dirname(__file__),
                                   'extras', module_name, '__init__.py')
-        if not os.path.exists(py_name) and not os.path.exists(py_dirname):
+        py_ib_name = os.path.join(os.path.dirname(__file__),
+                               'ironbio', module_name + '.py')
+        py_ib_dirname = os.path.join(os.path.dirname(__file__),
+                                  'ironbio', module_name, '__init__.py')
+        if not os.path.exists(py_name) and not os.path.exists(py_dirname) and not os.path.exists(py_ib_name) and not os.path.exists(py_ib_dirname):
             if default is not configfile.sentinel:
                 return default
             raise self.config_error("Unable to load module '%s'" % (section,))
-        mod = importlib.import_module('extras.' + module_name)
+        
+        if os.path.exists(py_ib_name) or os.path.exists(py_ib_dirname):
+            mod = importlib.import_module('ironbio.' + module_name)
+        else:
+            mod = importlib.import_module('extras.' + module_name)
+
         init_func = 'load_config'
         if len(module_parts) > 1:
             init_func = 'load_config_prefix'
@@ -234,7 +243,7 @@ class Printer:
 def import_test():
     # Import all optional modules (used as a build test)
     dname = os.path.dirname(__file__)
-    for mname in ['extras', 'kinematics']:
+    for mname in ['extras', 'kinematics', 'ironbio']:
         for fname in os.listdir(os.path.join(dname, mname)):
             if fname.endswith('.py') and fname != '__init__.py':
                 module_name = fname[:-3]
@@ -308,7 +317,8 @@ def main():
     extra_files = [fname for code, fname in git_info["file_status"]
                    if (code in ('??', '!!') and fname.endswith('.py')
                        and (fname.startswith('klippy/kinematics/')
-                            or fname.startswith('klippy/extras/')))]
+                            or fname.startswith('klippy/extras/')
+                            or fname.startswith('klippy/ironbio/')))]
     modified_files = [fname for code, fname in git_info["file_status"]
                       if code == 'M']
     extra_git_desc = ""
