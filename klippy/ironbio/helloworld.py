@@ -21,14 +21,14 @@ class HelloWorld:
 
     def cmd_HELLOWORLD(self, gcmd):
          # Получаем объект MCU
-            mcu = self.printer.lookup_object('mcu')
-            # Создаем команду для отправки
-            cmd = mcu.lookup_command("helloworld")
-            # Отправляем команду
-            cmd.send()
-            self.gcode.respond_raw("testtesttest")
-            gcmd.respond_info("Hello command sent to MCU" + str(self.i))
-            self.i += 1
+        mcu = self.printer.lookup_object('mcu')
+        # Создаем команду для отправки
+        cmd = mcu.lookup_command("helloworld")
+        # Отправляем команду
+        cmd.send()
+        self.gcode.respond_raw("testtesttest")
+        gcmd.respond_info("Hello command sent to MCU" + str(self.i))
+        self.i += 1
 
 def load_config(config):
     return HelloWorld(config)

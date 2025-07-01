@@ -1,7 +1,8 @@
 # Main code build rules
-# $(shell mkdir out/src/ironbio)
 dirs-$(CONFIG_HAVE_IRONBIO) += src/ironbio
-src-$(CONFIG_HAVE_IRONBIO) +=  ironbio/*.c
+IRONBIO_SRC_DIR := src/ironbio
+IRONBIO_SRC := $(wildcard $(IRONBIO_SRC_DIR)/*.c)
+src-$(CONFIG_HAVE_IRONBIO) += $(patsubst src/%,%,$(IRONBIO_SRC))
 
 src-y += sched.c command.c basecmd.c debugcmds.c
 src-$(CONFIG_HAVE_GPIO) += initial_pins.c gpiocmds.c stepper.c endstop.c \
