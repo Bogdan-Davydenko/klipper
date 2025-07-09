@@ -15,33 +15,40 @@ class PrinterEncoder:
         self.mcu = self.printer.lookup_object('mcu') # Вероятно нужно будет изменить метод получения mcu, если mcu будет несколько.
         self.oid = self.mcu.create_oid()
 
+        self.mcu.register_response(
+            self._handle_encoder_response, 
+            "encoder_position", self.oid
+        )
+
         # Регистрация команд
-        self.config_cmd = self.mcu.lookup_command(
-            "config_encoder oid=%c")
-        self.config_cmd = self.mcu.lookup_command(
-            "check_encoder oid=%c")
+        self.mcu.add_config_cmd("config_encoder oid=%d" % (self.oid))
 
         self.name = config.get_name().split()[1]
         
         self.gcode.register_mux_command("ENC_TEST", "ENCODER", self.name,
                                    self.cmd_ENC_TEST,
                                    desc=self.cmd_ENC_TEST_help)
-        # Отправка конфигурации на mcu
-        self.config_cmd.send([self.oid])
-        # Регистрация ответов от mcu
-        self.mcu.register_response(
-            self._handle_encoder_response, 
-            "encoder_" + str(self.oid) +":"
-        )
+        self.gcode.register_mux_command("ENC_SET", "ENCODER", self.name,
+                                   self.cmd_ENC_SET,
+                                   desc=self.cmd_ENC_SET_help)
+
 
     def _handle_encoder_response(self, params):
-        self.gcode.respond_raw("Encoder " + self.name + " position is: " + params.get('pos', 0))
+        if params.get('oid') == self.oid:
+            self.gcode.respond_raw("Encoder " + self.name + " position is: " + str(params.get('pos', 0)))
 
     cmd_ENC_TEST_help = "Encoder test command"
     def cmd_ENC_TEST(self, gcmd):
-        cmd = self.mcu.lookup_command("helloworld") # Создание команды
-        cmd.send() # Отправка команды
-        gcmd.respond_info(self.name) # Ответ об отправлении команды
+        cmd = self.mcu.lookup_command("check_encoder oid=%c") # Создание команды
+        cmd.send([self.oid]) # Отправка команды
+        #gcmd.respond_info(self.name) # Ответ об отправлении команды
+    
+    cmd_ENC_SET_help = "Encoder set position command"
+    def cmd_ENC_SET(self, gcmd):
+        pos = gcmd.get_int('POS', 0)
+        cmd = self.mcu.lookup_command("reset_encoder oid=%c pos=%i") # Создание команды
+        cmd.send([self.oid, pos]) # Отправка команды
+        #gcmd.respond_info(self.name) # Ответ об отправлении команды
 
 def load_config_prefix(config):
     return PrinterEncoder(config)

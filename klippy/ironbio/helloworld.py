@@ -26,7 +26,6 @@ class HelloWorld:
         cmd = mcu.lookup_command("helloworld")
         # Отправляем команду
         cmd.send()
-        self.gcode.respond_raw("testtesttest")
         gcmd.respond_info("Hello command sent to MCU" + str(self.i))
         self.i += 1
 
