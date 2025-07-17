@@ -14,14 +14,17 @@ class PrinterEncoder:
         self.gcode = self.printer.lookup_object('gcode')
         self.mcu = self.printer.lookup_object('mcu') # Вероятно нужно будет изменить метод получения mcu, если mcu будет несколько.
         self.oid = self.mcu.create_oid()
-
+        ppins = self.printer.lookup_object('pins')
+        self.pin_A = ppins.lookup_pin(config.get("pin_a"))
+        self.pin_B = ppins.lookup_pin(config.get("pin_b"))
+        
         self.mcu.register_response(
             self._handle_encoder_response, 
             "encoder_position", self.oid
         )
 
         # Регистрация команд
-        self.mcu.add_config_cmd("config_encoder oid=%d" % (self.oid))
+        self.mcu.add_config_cmd("config_encoder oid=%d a_pin=%s b_pin=%s" % (self.oid, self.pin_A['pin'], self.pin_B['pin']))
 
         self.name = config.get_name().split()[1]
         
